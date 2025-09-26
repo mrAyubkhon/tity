@@ -18,6 +18,14 @@ A sophisticated, luxury personal website built with React, TailwindCSS, and Fram
 4. **Quotes Section** - Inspirational quotes with elegant typography
 5. **Contact Section** - Contact form with validation and animations
 
+## 🗄️ Database Features
+
+- **MongoDB Integration**: Store photos, videos, and events
+- **File Upload**: Drag & drop media with Cloudinary storage
+- **Interactive Calendar**: Manage events and special moments
+- **Media Management**: Organize content with categories and tags
+- **Real-time Updates**: Live notifications and feedback
+
 ## 🚀 Quick Deploy
 
 ### One-Click Deploy to Vercel
@@ -25,31 +33,41 @@ A sophisticated, luxury personal website built with React, TailwindCSS, and Fram
 
 **Live Demo:** [https://tity.vercel.app](https://tity.vercel.app)
 
-## 🛠️ Local Development
+## 🛠️ Full Stack Setup
 
 ### Prerequisites
 - Node.js (version 14 or higher)
-- npm or yarn
+- MongoDB (local or Atlas)
+- Cloudinary account (for file storage)
 
-### Installation
+### Backend Setup
+```bash
+# Install backend dependencies
+cd backend
+npm install
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/mrAyubkhon/tity.git
-   cd tity
-   ```
+# Create environment file
+cp env.example .env
+# Edit .env with your MongoDB and Cloudinary credentials
 
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+# Start backend server
+npm run dev
+```
 
-3. Start the development server:
-   ```bash
-   npm start
-   ```
+### Frontend Setup
+```bash
+# Install frontend dependencies
+npm install
 
-4. Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+# Create environment file
+echo "REACT_APP_API_URL=http://localhost:5000/api" > .env
+
+# Start frontend
+npm start
+```
+
+### Database Configuration
+See [DATABASE_SETUP.md](./DATABASE_SETUP.md) for detailed instructions.
 
 ## 🛠️ Available Scripts
 
