@@ -3,6 +3,7 @@ import { Toaster } from 'react-hot-toast';
 import Hero from './components/Hero';
 import About from './components/About';
 import Gallery from './components/Gallery';
+import LuxuryCalendar from './components/LuxuryCalendar';
 import Quotes from './components/Quotes';
 import Contact from './components/Contact';
 import Navigation from './components/Navigation';
@@ -16,6 +17,7 @@ function App() {
       <Hero />
       <About />
       <Gallery />
+      <LuxuryCalendar />
       <Quotes />
       <Contact />
       <Toaster

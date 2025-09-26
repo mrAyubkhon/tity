@@ -1,52 +1,91 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Calendar from 'react-calendar';
-import { format, isSameDay, startOfMonth, endOfMonth } from 'date-fns';
-import { calendarAPI } from '../services/api';
+import { format, isSameDay } from 'date-fns';
+import toast from 'react-hot-toast';
 import 'react-calendar/dist/Calendar.css';
 
 const LuxuryCalendar = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [events, setEvents] = useState([]);
-  const [monthEvents, setMonthEvents] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [selectedEvent, setSelectedEvent] = useState(null);
+  const [showAddEvent, setShowAddEvent] = useState(false);
+  const [newEvent, setNewEvent] = useState({
+    title: '',
+    description: '',
+    time: '',
+    type: 'personal',
+    color: '#DC2626'
+  });
 
-  // Fetch events for the current month
+  // Sample events data
+  const sampleEvents = [
+    {
+      id: 1,
+      title: "Luxury Photo Shoot",
+      description: "Professional photoshoot for the new collection",
+      date: new Date(2024, 11, 15),
+      time: "10:00 AM",
+      type: "professional",
+      color: "#DC2626"
+    },
+    {
+      id: 2,
+      title: "Elegant Dinner Party",
+      description: "Exclusive dinner with close friends",
+      date: new Date(2024, 11, 20),
+      time: "7:00 PM",
+      type: "social",
+      color: "#B91C1C"
+    },
+    {
+      id: 3,
+      title: "Fashion Week",
+      description: "Attending the latest fashion week event",
+      date: new Date(2024, 11, 25),
+      time: "2:00 PM",
+      type: "professional",
+      color: "#DC2626"
+    },
+    {
+      id: 4,
+      title: "Personal Spa Day",
+      description: "Relaxing spa treatment and wellness",
+      date: new Date(2024, 11, 28),
+      time: "11:00 AM",
+      type: "personal",
+      color: "#059669"
+    }
+  ];
+
   useEffect(() => {
-    const fetchMonthEvents = async () => {
-      setLoading(true);
-      try {
-        const year = selectedDate.getFullYear();
-        const month = selectedDate.getMonth() + 1;
-        const monthEventsData = await calendarAPI.getMonthlyEvents(year, month);
-        setMonthEvents(monthEventsData);
-      } catch (error) {
-        console.error('Error fetching monthly events:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    // Load events from localStorage or use sample data
+    const savedEvents = localStorage.getItem('titu-events');
+    if (savedEvents) {
+      const parsedEvents = JSON.parse(savedEvents).map(event => ({
+        ...event,
+        date: new Date(event.date)
+      }));
+      setEvents(parsedEvents);
+    } else {
+      setEvents(sampleEvents);
+    }
+  }, []);
 
-    fetchMonthEvents();
-  }, [selectedDate]);
+  // Save events to localStorage
+  useEffect(() => {
+    localStorage.setItem('titu-events', JSON.stringify(events));
+  }, [events]);
 
   // Get events for selected date
-  useEffect(() => {
-    const dayEvents = monthEvents.filter(event => 
-      isSameDay(new Date(event.date), selectedDate)
-    );
-    setEvents(dayEvents);
-  }, [selectedDate, monthEvents]);
+  const getDayEvents = (date) => {
+    return events.filter(event => isSameDay(event.date, date));
+  };
 
   // Custom tile content for calendar
   const tileContent = ({ date, view }) => {
     if (view !== 'month') return null;
 
-    const dayEvents = monthEvents.filter(event => 
-      isSameDay(new Date(event.date), date)
-    );
-
+    const dayEvents = getDayEvents(date);
     if (dayEvents.length === 0) return null;
 
     return (
@@ -55,7 +94,7 @@ const LuxuryCalendar = () => {
           <div
             key={index}
             className="w-1.5 h-1.5 rounded-full mx-0.5"
-            style={{ backgroundColor: event.color || '#DC2626' }}
+            style={{ backgroundColor: event.color }}
             title={event.title}
           />
         ))}
@@ -70,10 +109,7 @@ const LuxuryCalendar = () => {
   const tileClassName = ({ date, view }) => {
     if (view !== 'month') return '';
 
-    const dayEvents = monthEvents.filter(event => 
-      isSameDay(new Date(event.date), date)
-    );
-
+    const dayEvents = getDayEvents(date);
     let classes = 'relative';
     
     if (dayEvents.length > 0) {
@@ -89,12 +125,38 @@ const LuxuryCalendar = () => {
 
   const handleDateChange = (date) => {
     setSelectedDate(date);
-    setSelectedEvent(null);
   };
 
-  const handleEventClick = (event) => {
-    setSelectedEvent(event);
+  const handleAddEvent = () => {
+    if (!newEvent.title.trim()) {
+      toast.error('Please enter an event title');
+      return;
+    }
+
+    const event = {
+      id: Date.now(),
+      ...newEvent,
+      date: selectedDate
+    };
+
+    setEvents(prev => [...prev, event]);
+    setNewEvent({
+      title: '',
+      description: '',
+      time: '',
+      type: 'personal',
+      color: '#DC2626'
+    });
+    setShowAddEvent(false);
+    toast.success('Event added successfully!');
   };
+
+  const handleDeleteEvent = (eventId) => {
+    setEvents(prev => prev.filter(event => event.id !== eventId));
+    toast.success('Event deleted successfully!');
+  };
+
+  const dayEvents = getDayEvents(selectedDate);
 
   return (
     <section id="calendar" className="section-padding bg-gradient-to-br from-soft-white to-white">
@@ -139,9 +201,6 @@ const LuxuryCalendar = () => {
                 className="luxury-calendar"
                 calendarType="US"
                 showNeighboringMonth={false}
-                formatShortWeekday={(locale, date) => 
-                  format(date, 'EEE', { locale })
-                }
               />
             </div>
           </motion.div>
@@ -156,45 +215,56 @@ const LuxuryCalendar = () => {
           >
             {/* Selected Date Info */}
             <div className="luxury-card p-6">
-              <h3 className="text-xl font-elegant font-semibold text-gray-800 mb-4">
-                {format(selectedDate, 'MMMM dd, yyyy')}
-              </h3>
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-elegant font-semibold text-gray-800">
+                  {format(selectedDate, 'MMMM dd, yyyy')}
+                </h3>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setShowAddEvent(true)}
+                  className="bg-luxury-red text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-elegant-red transition-colors duration-300"
+                >
+                  + Add Event
+                </motion.button>
+              </div>
               
-              {loading ? (
-                <div className="flex justify-center py-8">
-                  <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                    className="w-8 h-8 border-2 border-luxury-red border-t-transparent rounded-full"
-                  ></motion.div>
-                </div>
-              ) : events.length > 0 ? (
+              {dayEvents.length > 0 ? (
                 <div className="space-y-3">
-                  {events.map((event) => (
+                  {dayEvents.map((event) => (
                     <motion.div
-                      key={event._id}
+                      key={event.id}
                       whileHover={{ scale: 1.02 }}
-                      onClick={() => handleEventClick(event)}
                       className="p-3 rounded-lg border cursor-pointer transition-all duration-300 hover:shadow-md"
                       style={{ 
-                        borderColor: event.color || '#DC2626',
-                        backgroundColor: `${event.color || '#DC2626'}10`
+                        borderColor: event.color,
+                        backgroundColor: `${event.color}10`
                       }}
                     >
-                      <div className="flex items-center space-x-3">
-                        <div
-                          className="w-3 h-3 rounded-full"
-                          style={{ backgroundColor: event.color || '#DC2626' }}
-                        ></div>
-                        <div className="flex-1">
-                          <h4 className="font-medium text-gray-800">{event.title}</h4>
-                          {event.time?.start && (
-                            <p className="text-sm text-gray-600">
-                              {event.time.start}
-                              {event.time.end && ` - ${event.time.end}`}
-                            </p>
-                          )}
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <div
+                            className="w-3 h-3 rounded-full"
+                            style={{ backgroundColor: event.color }}
+                          ></div>
+                          <div className="flex-1">
+                            <h4 className="font-medium text-gray-800">{event.title}</h4>
+                            {event.time && (
+                              <p className="text-sm text-gray-600">{event.time}</p>
+                            )}
+                          </div>
                         </div>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDeleteEvent(event.id);
+                          }}
+                          className="text-gray-400 hover:text-red-500 transition-colors duration-300"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                        </button>
                       </div>
                     </motion.div>
                   ))}
@@ -212,23 +282,24 @@ const LuxuryCalendar = () => {
                 Upcoming Events
               </h3>
               <div className="space-y-3">
-                {monthEvents
-                  .filter(event => new Date(event.date) > new Date())
+                {events
+                  .filter(event => event.date > new Date())
+                  .sort((a, b) => a.date - b.date)
                   .slice(0, 5)
                   .map((event) => (
                     <motion.div
-                      key={event._id}
+                      key={event.id}
                       whileHover={{ scale: 1.02 }}
                       className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 transition-colors duration-300"
                     >
                       <div
                         className="w-2 h-2 rounded-full"
-                        style={{ backgroundColor: event.color || '#DC2626' }}
+                        style={{ backgroundColor: event.color }}
                       ></div>
                       <div className="flex-1">
                         <p className="font-medium text-sm text-gray-800">{event.title}</p>
                         <p className="text-xs text-gray-600">
-                          {format(new Date(event.date), 'MMM dd')}
+                          {format(event.date, 'MMM dd')} {event.time && `• ${event.time}`}
                         </p>
                       </div>
                     </motion.div>
@@ -238,13 +309,13 @@ const LuxuryCalendar = () => {
           </motion.div>
         </div>
 
-        {/* Event Modal */}
-        {selectedEvent && (
+        {/* Add Event Modal */}
+        {showAddEvent && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
-            onClick={() => setSelectedEvent(null)}
+            onClick={() => setShowAddEvent(false)}
           >
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
@@ -252,12 +323,12 @@ const LuxuryCalendar = () => {
               className="bg-white rounded-2xl p-6 max-w-md w-full"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex justify-between items-start mb-4">
+              <div className="flex justify-between items-start mb-6">
                 <h3 className="text-xl font-elegant font-semibold text-gray-800">
-                  {selectedEvent.title}
+                  Add New Event
                 </h3>
                 <button
-                  onClick={() => setSelectedEvent(null)}
+                  onClick={() => setShowAddEvent(false)}
                   className="text-gray-500 hover:text-luxury-red transition-colors duration-300"
                 >
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -267,43 +338,94 @@ const LuxuryCalendar = () => {
               </div>
               
               <div className="space-y-4">
-                <div className="flex items-center space-x-2">
-                  <svg className="w-5 h-5 text-luxury-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                  <span className="text-gray-700">
-                    {format(new Date(selectedEvent.date), 'MMMM dd, yyyy')}
-                  </span>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Event Title *
+                  </label>
+                  <input
+                    type="text"
+                    value={newEvent.title}
+                    onChange={(e) => setNewEvent(prev => ({ ...prev, title: e.target.value }))}
+                    className="form-input"
+                    placeholder="Enter event title"
+                  />
                 </div>
 
-                {selectedEvent.time?.start && (
-                  <div className="flex items-center space-x-2">
-                    <svg className="w-5 h-5 text-luxury-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span className="text-gray-700">
-                      {selectedEvent.time.start}
-                      {selectedEvent.time.end && ` - ${selectedEvent.time.end}`}
-                    </span>
-                  </div>
-                )}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Description
+                  </label>
+                  <textarea
+                    value={newEvent.description}
+                    onChange={(e) => setNewEvent(prev => ({ ...prev, description: e.target.value }))}
+                    className="form-textarea"
+                    rows={3}
+                    placeholder="Enter event description"
+                  />
+                </div>
 
-                {selectedEvent.location?.name && (
-                  <div className="flex items-center space-x-2">
-                    <svg className="w-5 h-5 text-luxury-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    <span className="text-gray-700">{selectedEvent.location.name}</span>
-                  </div>
-                )}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Time
+                  </label>
+                  <input
+                    type="text"
+                    value={newEvent.time}
+                    onChange={(e) => setNewEvent(prev => ({ ...prev, time: e.target.value }))}
+                    className="form-input"
+                    placeholder="e.g., 7:00 PM"
+                  />
+                </div>
 
-                {selectedEvent.description && (
-                  <div>
-                    <h4 className="font-medium text-gray-800 mb-2">Description</h4>
-                    <p className="text-gray-600 text-sm">{selectedEvent.description}</p>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Event Type
+                  </label>
+                  <select
+                    value={newEvent.type}
+                    onChange={(e) => setNewEvent(prev => ({ ...prev, type: e.target.value }))}
+                    className="form-input"
+                  >
+                    <option value="personal">Personal</option>
+                    <option value="professional">Professional</option>
+                    <option value="social">Social</option>
+                    <option value="travel">Travel</option>
+                    <option value="celebration">Celebration</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Color
+                  </label>
+                  <div className="flex space-x-2">
+                    {['#DC2626', '#B91C1C', '#059669', '#7C3AED', '#EA580C'].map((color) => (
+                      <button
+                        key={color}
+                        onClick={() => setNewEvent(prev => ({ ...prev, color }))}
+                        className={`w-8 h-8 rounded-full border-2 ${
+                          newEvent.color === color ? 'border-gray-400' : 'border-gray-200'
+                        }`}
+                        style={{ backgroundColor: color }}
+                      />
+                    ))}
                   </div>
-                )}
+                </div>
+              </div>
+
+              <div className="flex justify-end space-x-3 mt-6">
+                <button
+                  onClick={() => setShowAddEvent(false)}
+                  className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors duration-300"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleAddEvent}
+                  className="luxury-btn"
+                >
+                  Add Event
+                </button>
               </div>
             </motion.div>
           </motion.div>
