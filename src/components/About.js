@@ -46,7 +46,16 @@ const About = () => {
                   transition={{ duration: 0.3 }}
                   className="w-80 h-80 rounded-full overflow-hidden shadow-2xl border-4 border-white"
                 >
-                  <div className="w-full h-full bg-gradient-to-br from-luxury-red/20 to-elegant-red/20 flex items-center justify-center">
+                  <img 
+                    src="/images/titu-avatar.jpg" 
+                    alt="Titu - Elegant Portrait"
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.nextSibling.style.display = 'flex';
+                    }}
+                  />
+                  <div className="w-full h-full bg-gradient-to-br from-luxury-red/20 to-elegant-red/20 flex items-center justify-center" style={{display: 'none'}}>
                     <div className="text-center text-gray-500">
                       <svg className="w-24 h-24 mx-auto mb-4" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
