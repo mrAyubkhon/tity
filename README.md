@@ -21,6 +21,8 @@ A sophisticated, luxury personal website built with React, TailwindCSS, and Fram
 ## ✨ Enhanced Features
 
 - **Advanced Gallery**: Enhanced filtering, tags, and featured content
+- **Interactive Calendar**: Add, manage, and view events with color coding
+- **Event Management**: Create, edit, and delete events with local storage
 - **Interactive Elements**: Smooth animations and hover effects
 - **Responsive Design**: Optimized for all devices
 - **Professional UI**: Luxury design with elegant typography
