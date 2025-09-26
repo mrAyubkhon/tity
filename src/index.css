@@ -1,0 +1,131 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #FEFEFE;
+  color: #1F2937;
+  overflow-x: hidden;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F1F5F9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #DC2626;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #B91C1C;
+}
+
+/* Background animation particles */
+.particle {
+  position: absolute;
+  background: radial-gradient(circle, rgba(220, 38, 38, 0.1) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: float 6s ease-in-out infinite;
+}
+
+.particle:nth-child(1) {
+  width: 80px;
+  height: 80px;
+  top: 20%;
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.particle:nth-child(2) {
+  width: 120px;
+  height: 120px;
+  top: 60%;
+  right: 15%;
+  animation-delay: 2s;
+}
+
+.particle:nth-child(3) {
+  width: 60px;
+  height: 60px;
+  bottom: 30%;
+  left: 20%;
+  animation-delay: 4s;
+}
+
+.particle:nth-child(4) {
+  width: 100px;
+  height: 100px;
+  top: 40%;
+  right: 30%;
+  animation-delay: 1s;
+}
+
+/* Luxury button styles */
+.luxury-btn {
+  @apply bg-luxury-red text-white px-8 py-4 rounded-full font-medium transition-all duration-300 hover:bg-elegant-red hover:shadow-lg hover:shadow-luxury-red/25 hover:scale-105 active:scale-95;
+}
+
+.luxury-btn-outline {
+  @apply border-2 border-luxury-red text-luxury-red px-8 py-4 rounded-full font-medium transition-all duration-300 hover:bg-luxury-red hover:text-white hover:shadow-lg hover:shadow-luxury-red/25 hover:scale-105 active:scale-95;
+}
+
+/* Section spacing */
+.section-padding {
+  @apply py-20 px-4 sm:px-6 lg:px-8;
+}
+
+/* Container max width */
+.container-custom {
+  @apply max-w-7xl mx-auto;
+}
+
+/* Text styles */
+.heading-primary {
+  @apply text-4xl sm:text-5xl lg:text-6xl font-elegant font-bold text-gray-900 leading-tight;
+}
+
+.heading-secondary {
+  @apply text-2xl sm:text-3xl lg:text-4xl font-elegant font-semibold text-gray-800;
+}
+
+.text-elegant {
+  @apply text-lg text-gray-600 leading-relaxed;
+}
+
+/* Card styles */
+.luxury-card {
+  @apply bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105;
+}
+
+/* Form styles */
+.form-input {
+  @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-red focus:border-transparent transition-all duration-300 bg-white;
+}
+
+.form-textarea {
+  @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-luxury-red focus:border-transparent transition-all duration-300 bg-white resize-none;
+}
+
+/* Gradient utilities */
+.bg-gradient-radial {
+  background: radial-gradient(circle, var(--tw-gradient-stops));
+}
