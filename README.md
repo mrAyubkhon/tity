@@ -23,10 +23,18 @@ A sophisticated, luxury personal website built with React, TailwindCSS, and Fram
 - **Advanced Gallery**: Enhanced filtering, tags, and featured content
 - **Interactive Calendar**: Add, manage, and view events with color coding
 - **Event Management**: Create, edit, and delete events with local storage
+- **Real Contact Information**: Updated with Titu's actual contact details
+- **Profile Photo Support**: Ready for Titu's elegant portrait
 - **Interactive Elements**: Smooth animations and hover effects
 - **Responsive Design**: Optimized for all devices
 - **Professional UI**: Luxury design with elegant typography
 - **Content Management**: Easy organization with categories and tags
+
+## 📞 Contact Information
+
+- **Email**: [tity@thebest.com](mailto:tity@thebest.com)
+- **Phone**: [+998 77 055 55 99](tel:+998770555599)
+- **Location**: Tashkent, Uzbekistan
 
 ## 🚀 Quick Deploy
 
