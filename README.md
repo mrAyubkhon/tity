@@ -18,32 +18,38 @@ A sophisticated, luxury personal website built with React, TailwindCSS, and Fram
 4. **Quotes Section** - Inspirational quotes with elegant typography
 5. **Contact Section** - Contact form with validation and animations
 
-## 🚀 Getting Started
+## 🚀 Quick Deploy
+
+### One-Click Deploy to Vercel
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/mrAyubkhon/tity.git)
+
+**Live Demo:** [https://tity.vercel.app](https://tity.vercel.app)
+
+## 🛠️ Local Development
 
 ### Prerequisites
-
 - Node.js (version 14 or higher)
 - npm or yarn
 
 ### Installation
 
-1. Clone or download the project
-2. Navigate to the project directory:
+1. Clone the repository:
    ```bash
-   cd titu-luxury-website
+   git clone https://github.com/mrAyubkhon/tity.git
+   cd tity
    ```
 
-3. Install dependencies:
+2. Install dependencies:
    ```bash
    npm install
    ```
 
-4. Start the development server:
+3. Start the development server:
    ```bash
    npm start
    ```
 
-5. Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+4. Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
 ## 🛠️ Available Scripts
 
