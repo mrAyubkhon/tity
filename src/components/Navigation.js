@@ -41,7 +41,7 @@ const Navigation = () => {
           </motion.div>
           
           <div className="hidden md:flex space-x-8">
-            {['hero', 'about', 'gallery', 'calendar', 'quotes', 'contact'].map((item) => (
+            {['hero', 'about', 'gallery', 'quotes', 'contact'].map((item) => (
               <motion.button
                 key={item}
                 whileHover={{ scale: 1.1 }}
